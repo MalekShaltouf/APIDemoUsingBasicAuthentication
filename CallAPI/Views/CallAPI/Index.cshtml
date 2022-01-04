@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@Html.Hidden("currentId")
+<section>
+    <div style="margin:20px 0;overflow:hidden">
+        <div style="float:left">
+            <a href="@Url.Action("Create","CallAPI")" id="New" class="btn btn-info">New</a>
+        </div>
+        <div style="float:right">
+            <button id="call-api" class="btn btn-primary">call API</button>
+        </div>
+    </div>
+    <div id="table-data">
+    </div>
+
+</section>
+@section scripts{
+    <script>
+        $(function () {
+            $("#call-api").click(function () {
+                GetEmployeeDataFromAPI();
+            });
+        });
+        $("#yes-button").on("click", function (e)
+        {
+            let currentId = $("#currentId").val();
+            $.ajax({
+                url: `https://localhost:44378/api/EmployeeService/${currentId}`,
+                type: "DELETE",
+                headers: { Authorization: "Basic " + btoa("@ViewBag.UserName" + ":" + "@ViewBag.Password") },
+                success: function (response)
+                {
+                    $('#notification').modal('hide');
+                    GetEmployeeDataFromAPI();
+                },
+                complete: function (xhr, textStatus)
+                {
+                    if (textStatus == "error")
+                    {
+                        showNotification("ERROR", xhr.responseJSON.ExceptionMessage);
+                    }
+                }
+            });
+        });
+        function Delete(event)
+        {
+            let currentId = event.getAttribute("data-id");
+            $("#currentId").val(currentId);
+            showNotification("WARNING", "Are you sure to delete this item?");
+        }
+        function GetEmployeeDataFromAPI()
+        {
+            $.ajax({
+                    url: "https://localhost:44378/api/EmployeeService",
+                    type: "GET",
+                    headers: { Authorization: "Basic " + btoa("@ViewBag.UserName : @ViewBag.Password") },
+                    dataType: "json",
+                    success: function (data) {
+                        $("#table-data").empty();
+                        let table = `<table class="table"><tr>
+                                        <th>FirstName</th>
+                                        <th>LastName</th>
+                                        <th>Gender</th>
+                                        <th>Salary</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>`;
+                        data.forEach(emp => {
+                            table += `<tr>
+                                        <td>${emp.FirstName}</td>
+                                        <td>${emp.LastName}</td>
+                                        <td>${emp.Gender}</td>
+                                        <td>${emp.Salary}</td>
+                                        <td><a  href="/CallAPI/Edit/${emp.ID}" class="btn btn-success">Edit</a></td>
+                                        <td><button type="button" data-id="${emp.ID}" class="btn btn-danger" onclick="Delete(this)">Delete</button></td>
+                                        </tr>`;
+                        });
+                        table += `</table>`;
+                        $("#table-data").append(table);
+                }
+            });
+        }
+    </script>
+}
+

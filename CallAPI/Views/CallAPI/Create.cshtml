@@ -1,0 +1,86 @@
+﻿@using DataAccess.Models
+@model Employee
+@{
+    ViewBag.Title = "Create";
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(model => model.ID)
+    <section class="container" style="margin-top:20px">
+        <div class="form-group">
+            @Html.Label("First Name")
+            @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.Label("Last Name")
+            @Html.TextBoxFor(model => model.LastName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.Label("Gender")
+            @Html.TextBoxFor(model => model.Gender, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.Label("Salary")
+            @Html.TextBoxFor(model => model.Salary, new { @class = "form-control", type = "number" })
+            @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger" })
+        </div>
+        <div>
+            <button id="@(ViewBag.ProcessType == "EDIT" ? "Edit" : "Save")" type="button" class="btn btn-primary">save</button>
+        </div>
+    </section>
+}
+
+@section scripts{
+    <script>
+        $("#Save").click(function () {
+            let employee = new Object();
+            employee.FirstName = $("#FirstName").val();
+            employee.LastName = $("#LastName").val();
+            employee.Gender = $("#Gender").val();
+            employee.Salary = $("#Salary").val();
+            $.ajax({
+                url: "https://localhost:44378/api/EmployeeService",
+                type: "POST",
+                data: employee,
+                headers: { Authorization: "Basic " + btoa("@ViewBag.UserName" + ":" + "@ViewBag.Password")},
+                complete: function (xhr, textStatus)
+                {
+                    if (xhr.status == "201") {
+                        window.location.href = "/CallAPI/Index";
+                    }
+                    else
+                    {
+                        showNotification("ERROR", xhr.responseJSON.ExceptionMessage);
+                    }
+                }
+            });
+        });
+        $("#Edit").click(function () {
+            let employee = new Object();
+            employee.ID = $("#ID").val();
+            employee.FirstName = $("#FirstName").val();
+            employee.LastName = $("#LastName").val();
+            employee.Gender = $("#Gender").val();
+            employee.Salary = $("#Salary").val();
+            $.ajax({
+                url: "https://localhost:44378/api/EmployeeService",
+                type: "PUT",
+                data: employee,
+                headers: { Authorization: "Basic " + btoa("@ViewBag.UserName" + ":" + "@ViewBag.Password")},
+                complete: function (xhr, textStatus) {
+                    debugger;
+                    if (xhr.status == "200") {
+                        window.location.href = "/CallAPI/Index";
+                    }
+                    else {
+                        showNotification("ERROR", xhr.responseJSON.ExceptionMessage);
+                    }
+                }
+            });
+        });
+    </script>
+
+}

@@ -1,0 +1,35 @@
+﻿@using CallAPI.Models
+@model UserViewModel
+@{
+    ViewBag.Title = "Create";
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(model => model.USER_ID)
+    <section class="container" style="margin-top:20px">
+        <div class="form-group">
+            @Html.Label("User Name")
+            @Html.TextBoxFor(model => model.USER_NAME, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.USER_NAME, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.Label("Password")
+            @Html.TextBoxFor(model => model.PASSWORD, new { @class = "form-control", type = "password" })
+            @Html.ValidationMessageFor(model => model.PASSWORD, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.Label("Confirm Password")
+            @Html.TextBoxFor(model => model.CONFIRM_PASSWORD, new { @class = "form-control", type = "password" })
+            @Html.ValidationMessageFor(model => model.CONFIRM_PASSWORD, "", new { @class = "text-danger" })
+        </div>
+        <div>
+            <button id="save" type="submit" class="btn btn-primary">save</button>
+        </div>
+    </section>
+}
+
+@section scripts{
+    <script>
+       
+    </script>
+}
