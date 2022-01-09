@@ -31,10 +31,9 @@ namespace CallAPI.Controllers
             string[] userName_Password = User.Identity.Name.Split('|');
             ViewBag.UserName = userName_Password[0];
             ViewBag.Password = userName_Password[1];
-            DataAccessContext context = new DataAccessContext();
-            Employee employee = context.Employees.SingleOrDefault(emp => emp.ID == Id);
+
             ViewBag.ProcessType = "EDIT";
-            return View("Create", employee);
+            return View("Create");
         }
     }
 }

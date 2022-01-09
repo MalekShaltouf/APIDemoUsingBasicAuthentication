@@ -21,6 +21,20 @@ namespace APIDemo.Controllers
             DataAccessContext context = new DataAccessContext();
             return context.Employees.ToList();
         }
+        [HttpGet]
+        public HttpResponseMessage GetEmployeeBasedId(int? Id)
+        {
+            try
+            {
+                DataAccessContext context = new DataAccessContext();
+                Employee employee = context.Employees.SingleOrDefault(emp => emp.ID == Id);
+                return Request.CreateResponse(HttpStatusCode.OK, employee);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+            }
+        }
         [HttpPost]
         public HttpResponseMessage Post(Employee employee) 
         {
